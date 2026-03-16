@@ -52,24 +52,16 @@ cp .env.example .env
 ### CLI
 
 ```bash
-# Process a single PDF through the full pipeline
-distillstack process path/to/document.pdf
+# Extract structured data from a PDF
+distillstack extract path/to/document.pdf
 
 # Specify a custom output directory
-distillstack process path/to/document.pdf --output-dir ./results
+distillstack extract path/to/document.pdf --output-dir ./results
 ```
 
-Output is a JSONL file where each line contains:
-
-```json
-{
-  "instruction": "...",
-  "thought": "...",
-  "output": "...",
-  "source_file": "path/to/document.pdf",
-  "quality": { "faithfulness": 0.95, "complexity": 0.72 }
-}
-```
+This produces two files in the output directory:
+- `<name>.md` -- extracted Markdown
+- `<name>.json` -- full structured `InternalDocument` (pages, content blocks, metadata)
 
 ### API Server
 
@@ -79,16 +71,20 @@ uvicorn distillstack.api.app:app --host 0.0.0.0 --port 8000
 
 Endpoints:
 
-| Method | Path       | Description                                      |
-|--------|------------|--------------------------------------------------|
-| GET    | `/health`  | Liveness check                                   |
-| POST   | `/process` | Upload a PDF, receive scored JSONL as a download  |
+| Method | Path                | Description                                      |
+|--------|---------------------|--------------------------------------------------|
+| GET    | `/health`           | Liveness check                                   |
+| POST   | `/extract`          | Upload a PDF, receive structured JSON             |
+| POST   | `/extract/markdown` | Upload a PDF, receive extracted Markdown           |
 
 ```bash
-# Example: upload a PDF
-curl -X POST http://localhost:8000/process \
-  -F "file=@document.pdf" \
-  -o output.jsonl
+# Get structured JSON
+curl -X POST http://localhost:8000/extract \
+  -F "file=@document.pdf" -o result.json
+
+# Get Markdown only
+curl -X POST http://localhost:8000/extract/markdown \
+  -F "file=@document.pdf" -o result.md
 ```
 
 ## Configuration
