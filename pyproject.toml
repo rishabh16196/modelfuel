@@ -1,0 +1,52 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.backends"
+
+[project]
+name = "distillstack"
+version = "0.1.0"
+description = "Cognitive ETL Pipeline: ingest PDFs, extract structure, synthesize instruction-tuning datasets for SLMs."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [{ name = "DistillStack Team" }]
+
+dependencies = [
+    "docling>=2.80",
+    "transformers>=4.45",
+    "litellm>=1.50",
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
+    "pydantic-settings>=2.6",
+    "aiofiles>=24.1",
+    "python-multipart>=0.0.12",
+]
+
+[project.scripts]
+distillstack = "distillstack.cli:main"
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.8",
+    "pytest>=8.3",
+    "pytest-asyncio>=0.24",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/distillstack"]
+
+[tool.ruff]
+target-version = "py312"
+src = ["src"]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "ANN"]
+ignore = ["ANN101", "ANN102", "ANN401"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["distillstack"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]

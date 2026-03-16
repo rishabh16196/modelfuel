@@ -1,0 +1,8 @@
+docling>=2.80
+transformers>=4.45
+litellm>=1.50
+fastapi>=0.115
+uvicorn[standard]>=0.30
+pydantic-settings>=2.6
+aiofiles>=24.1
+python-multipart>=0.0.12
